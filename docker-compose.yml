@@ -10,7 +10,7 @@ services:
       - postgres:/data/postgres
       - /var/run/postgresql:/var/run/postgresql
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - stack
     restart: unless-stopped
@@ -24,29 +24,48 @@ services:
     volumes:
       - pgadmin:/root/.pgadmin
     ports:
-      - '${PGADMIN_PORT:-5050}:80'
+      - "${PGADMIN_PORT:-5050}:80"
     networks:
       - stack
     restart: unless-stopped
+
   redis:
     container_name: redis-local
     image: redis:7
     volumes:
       - redis:/data
     ports:
-      - '6379:6379'
+      - "6379:6379"
     networks:
       - stack
     restart: unless-stopped
+
   mongo:
     container_name: mongo-local
     image: mongo:7
     ports:
-      - '27017:27017'
+      - "27017:27017"
     networks:
       - stack
     volumes:
       - mongo:/data/db
+    restart: unless-stopped
+
+  mysql:
+    container_name: mysql-local
+    image: mysql:8
+    command: --mysql-native-password=ON
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mydatabase}
+      MYSQL_USER: ${MYSQL_USER:-yanmife}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-yanmife}
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - stack
     restart: unless-stopped
 
 networks:
@@ -58,3 +77,4 @@ volumes:
   pgadmin:
   redis:
   mongo:
+  mysql:
